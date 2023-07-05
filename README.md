@@ -35,7 +35,7 @@ Then run:
 
 ## Installation
 
-Git clone the project/download the workflow from GitHub. 
+Git clone the project/download the workflow from GitHub.
 It requires conda/mamba to install the correct environments. When this has been installed, the necessary packages can be installed with the provided YAML file `virmake.yaml`. This can be done with the command:
 
 `conda env create --name virmake --file=virmake.yml`
@@ -44,7 +44,7 @@ Or with mamba:
 
 `mamba env create --name virmake --file=virmake.yml`
 
-The pipeline requiers two starting files to be initialized before running. These are the `config.yaml` and a `samples.tsv`. The `config.yaml` contains parameters for running the Snakemake, and is where users can customize their analysis. The `samples.tsv` is a file containing the name of each sample, thiscan be user made or created with initialization command. 
+The pipeline requiers two starting files to be initialized before running. These are the `config.yaml` and a `samples.tsv`. The `config.yaml` contains parameters for running the Snakemake, and is where users can customize their analysis. The `samples.tsv` is a file containing the name of each sample, thiscan be user made or created with initialization command.
 Note: VirMake follows a precise naming convention for samples, they follow the convention of `SAMPLENAME_R1.fastq.gz` where `SAMPLENAME` is the variable name. All samples must be within the same folder.
 
 An expected structuring of samples and other files looks like this:
@@ -58,7 +58,7 @@ An expected structuring of samples and other files looks like this:
 
 Make sure you are within the directory of VirMake and run:
 
-    Usage: virmake.py init [OPTIONS] SAMPLES_PATH 
+    Usage: virmake.py init [OPTIONS] SAMPLES_PATH
 
     python virmake.py init [OPTIONS]
         Options:
@@ -72,9 +72,9 @@ If you followed the expected structure you would run:
 `python virmake.py init -d ./Databases/ ./samples/`
 
 This will create a basic config file and a sample table which are both needed to run the workflow.
-  
+
 The last required step is to download all needed databases and external files. This command downloads the DRAMv database, it requiers 125 GB minimum RAM and around 35 GB of disk space.
-If this creates problems or you want to download it yourself, follow instruction within the `workflow/rules/download.smk`. 
+If this creates problems or you want to download it yourself, follow instruction within the `workflow/rules/download.smk`.
 Downloading the databases can be done with the command:
 
     Usage: virmake.py download [OPTIONS]          % Requiers the database location to be provided.
@@ -172,7 +172,7 @@ This folder contains the pileup.sh results and coverage statistics. An interstin
 
 ## DRAMv
 
-This folder contains the results from DRAMv, both annotate and distilled. The most relevant files can be found within the `distilled` folder. The `amg_summary.tsv` contains all the AMG and functional annotation information. The `product.html` file Is a heatmap of all AMGs, where they exist, their function and how many there are within the vOTU. 
+This folder contains the results from DRAMv, both annotate and distilled. The most relevant files can be found within the `distilled` folder. The `amg_summary.tsv` contains all the AMG and functional annotation information. The `product.html` file Is a heatmap of all AMGs, where they exist, their function and how many there are within the vOTU.
 
 ## fastqc
 
@@ -218,7 +218,7 @@ This folder contains the fastp quality controlled raw reads and the relevant rep
 
 ## vcontact2
 
-This folder contains the VCONTACT2 output. The folder `genes_2_genomes` contains the files used when introducing the INPHARED database to be included in the taxonomic annotation. For further analysis the `c1.clusters` and `c1.ntw` can be used and viewed within [Cytoscape](https://cytoscape.org/). 
+This folder contains the VCONTACT2 output. The folder `genes_2_genomes` contains the files used when introducing the INPHARED database to be included in the taxonomic annotation. For further analysis the `c1.clusters` and `c1.ntw` can be used and viewed within [Cytoscape](https://cytoscape.org/).
 
 ## vibrant
 
@@ -226,4 +226,4 @@ This folder contains all VIBRANT results grouped by sample and one for the vOTUs
 
 ## virsorter2
 
-This folder contains all results from virsorter2. The most relevant file here is the `final-viral-score.tsv` file, which contains the scorings for each contig and what type of virus it was deemed as. 
+This folder contains all results from virsorter2. The most relevant file here is the `final-viral-score.tsv` file, which contains the scorings for each contig and what type of virus it was deemed as.

@@ -5,18 +5,18 @@ import click
 from get_sample_table import *
 from make_config import *
 
-def intilialize_virmake(
-    sample_path, outfile="samples.tsv"
-):
+
+def intilialize_virmake(sample_path, outfile="samples.tsv"):
     """
     Creates a sample file for all samples.
     """
 
     if os.path.exists(outfile):
-            print(f"Output file {outfile} already exists, will not overwrite")
-            exit(1)
+        print(f"Output file {outfile} already exists, will not overwrite")
+        exit(1)
 
     write_sample_table(sample_path)
+
 
 @click.command(
     "init",
@@ -54,7 +54,7 @@ def run_init(
     Make a config file and create a sample table
     """
 
-    #Make sure the directories exist and creates them if not
+    # Make sure the directories exist and creates them if not
     os.makedirs(working_dir, exist_ok=True)
     os.makedirs(db_dir, exist_ok=True)
 
