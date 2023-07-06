@@ -5,7 +5,7 @@ import subprocess
 import logging
 
 from snakemake.io import load_configfile
-from make_config import make_config
+from utils.make_config import make_config
 from virmake_init import run_init
 
 
@@ -32,7 +32,9 @@ cli.add_command(run_init)
 )
 @click.argument(
     "workflow",
-    type=click.Choice(["qc", "assembly", "identification", "taxonomy", "all", "None"]),
+    type=click.Choice(
+        ["qc", "assembly", "identification", "taxonomy", "all", "None"]
+    ),
 )
 @click.option(
     "--profile",
@@ -72,7 +74,8 @@ def run_workflow(workflow, dryrun, working_dir, profile, config_file, threads):
 
     if not os.path.exists(config_file):
         logging.critical(
-            f"config-file not found: {config_file}\n" "generate one with 'virmake init'"
+            f"config-file not found: {config_file}\n"
+            "generate one with 'virmake init'"
         )
         exit(1)
     sample_file = os.path.join(working_dir, "samples.tsv")
@@ -86,7 +89,7 @@ def run_workflow(workflow, dryrun, working_dir, profile, config_file, threads):
 
     snakefile = get_snakefile()
     config = load_configfile(config_file)
-    profile = config["Workflow_dirs"]["Profile_dir"]
+    profile = config["workflow_dirs"]["profile_dir"]
     print("Starting workflow...")
     cmd = (
         "time"
@@ -115,60 +118,6 @@ def run_workflow(workflow, dryrun, working_dir, profile, config_file, threads):
         exit(1)
 
 
-########DOWNLOAD################
-# Download
-@cli.command(
-    "download",
-    context_settings=dict(ignore_unknown_options=True),
-    short_help="download reference files (need ~50GB)",
-)
-@click.option(
-    "-d",
-    "--db-dir",
-    help="location to store databases",
-    type=click.Path(dir_okay=True, writable=True, resolve_path=True),
-    required=True,
-)
-@click.option(
-    "--threads",
-    default=8,
-    type=int,
-    help="number of threads to use per multi-threaded job",
-)
-@click.option(
-    "-n",
-    "--dryrun",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Test execution.",
-)
-def run_download(db_dir, dryrun, threads):
-    """Executes the download snakemake for the workflow at a given database location"""
-
-    cmd = (
-        "snakemake --snakefile {snakefile} "
-        "--rerun-incomplete "
-        "--conda-frontend mamba "
-        "--nolock  --use-conda --use-singularity {dryrun}"
-        " --show-failed-logs "
-        "--config DB_DIR='{db_dir}'"
-        " -c{threads}"
-    ).format(
-        snakefile=get_snakefile("workflow/rules/download.smk"),
-        db_dir=db_dir.rstrip("/"),
-        dryrun="-n" if dryrun else "",
-        threads=threads,
-    )
-    logging.debug("Executing: " + cmd)
-    try:
-        subprocess.check_call(cmd, shell=True)
-    except subprocess.CalledProcessError as e:
-        # removes the traceback
-        logging.critical(e)
-        exit(1)
-
-
 # Prep For offline
 @cli.command(
     "prep-offline",
@@ -185,7 +134,7 @@ def run_prep_offline(threads):
     """Downloads and creates all enviorments needed to run the workflow offline."""
 
     cmd = (
-        "snakemake --snakefile {snakefile} "
+        "snakemake --snakefile {snakefile}"
         "--rerun-incomplete "
         "--conda-frontend mamba"
         " --nolock  --use-conda --use-singularity --conda-create-envs-only"

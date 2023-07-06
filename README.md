@@ -12,13 +12,13 @@ VirMake is a Snakemake based pipeline that offers viral metagenic data analysis 
 
 `mamba env create --name virmake --file=virmake.yaml`
 
-`python virmake.py download -d ./Databases/`
+`python virmake.py download -d ./databases/`
 
 `python virmake.py prep-offline --threads 8`
 
 Place samples in samples folder, and then run:
 
-`python virmake.py init -d ./Databases/ ./samples/`
+`python virmake.py init -d ./databases/ ./samples/`
 
 Get example files by:
 
@@ -38,11 +38,11 @@ Then run:
 Git clone the project/download the workflow from GitHub.
 It requires conda/mamba to install the correct environments. When this has been installed, the necessary packages can be installed with the provided YAML file `virmake.yaml`. This can be done with the command:
 
-`conda env create --name virmake --file=virmake.yml`
+`conda env create --name virmake --file=virmake.yaml`
 
 Or with mamba:
 
-`mamba env create --name virmake --file=virmake.yml`
+`mamba env create --name virmake --file=virmake.yaml`
 
 The pipeline requiers two starting files to be initialized before running. These are the `config.yaml` and a `samples.tsv`. The `config.yaml` contains parameters for running the Snakemake, and is where users can customize their analysis. The `samples.tsv` is a file containing the name of each sample, thiscan be user made or created with initialization command.
 Note: VirMake follows a precise naming convention for samples, they follow the convention of `SAMPLENAME_R1.fastq.gz` where `SAMPLENAME` is the variable name. All samples must be within the same folder.
@@ -50,7 +50,7 @@ Note: VirMake follows a precise naming convention for samples, they follow the c
 An expected structuring of samples and other files looks like this:
 
         VirMake
-            ./Databases/        % Contains all Databases needed by VirMake
+            ./databases/        % Contains all databases needed by VirMake
             ./samples/          % Here is the folder for samples
             ./workflow/         % Workflow files
             ./config.yaml       % The generated yaml config file
@@ -69,7 +69,7 @@ Make sure you are within the directory of VirMake and run:
 
 If you followed the expected structure you would run:
 
-`python virmake.py init -d ./Databases/ ./samples/`
+`python virmake.py init -d ./databases/ ./samples/`
 
 This will create a basic config file and a sample table which are both needed to run the workflow.
 
@@ -86,9 +86,9 @@ Downloading the databases can be done with the command:
       -n, --dryrun       Test execution.
       -h, --help         Show this message and exit.
 
-If you have the standard Databases location, simply run:
+If you have the standard databases location, simply run:
 
-`python virmake.py download -d ./Databases/ --threads 16`
+`python virmake.py download -d ./databases/ --threads 16`
 
 Depending on if you run the pipeline locally or on a cluster node, you may need to pre-download all environments for Snakemake.
 This can be done with the `prep-offline` command
@@ -114,11 +114,11 @@ This can easily be done by opening the config file and use search and replace on
 
 Original path on machine with internet:
 
-    c:/home/something/Databases/....
+    c:/home/something/databases/....
 
 To new machine:
 
-    /cluster/project/group/user/Databases/...
+    /cluster/project/group/user/databases/...
 
 ##  Running the workflow
 To run the workflow after the setup steps, simply use the command:
@@ -146,7 +146,7 @@ Or if runing on a Cluster:
 When running on a cluster, lookup seting up a cluster execution profile file from Snakemake website: [cluster profile](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles)
 Or look for inspiration within the  `EXAMPLE_PROFILE_CONFIG.yaml`
 
-# Regarding Databases.
+# Regarding databases.
 
 All databases used can can be downloaded manually and later added to the config, or if some are already downloaded.
 Simply edit the config file paths, but follow the structure as in the example config.
@@ -163,7 +163,7 @@ The folder contains the cluster file produced by cdhit and the dereplicated file
 
 ## checkv
 
-This folder contains all the checkV resulst grouped by what they were run on, and which sample it is. This includes vibrant, virsorter and the vOTUs. The interesting files here are the `quality_summary.tsv` which is the summarized result of CheckV for that run. And in the `filtered` folder, contains two files with only quality controlled contig names within `filtered_contigs` and their fasta sequence in `filtered_combined.fna`
+This folder contains all the checkV resulst grouped by what they were run on, and which sample it is. This includes vibrant, virsorter and the vOTUs. The interesting files here are the `quality_summary.tsv` which is the summarized result of checkv for that run. And in the `filtered` folder, contains two files with only quality controlled contig names within `filtered_contigs` and their fasta sequence in `filtered_combined.fna`
 
 
 ## contig_stats
@@ -204,7 +204,7 @@ This folder contains the results from running prodigal and provides the predicte
 
 This folder contains the aggregated statistics and plots for the pipeline.
 The Taxonomic annotation information can be found in the three files:
-`vOTU_stats_combined.tsv` `vOTU_stats_vibrant.tsv` `vOTU_stats_virsorter2.tsv`. They give insight of the taxonomic classification at Family, Subfamily and Genus level. it also includes the CheckV quality score, accession number and if the identified virus is a provirus.
+`vOTU_stats_combined.tsv` `vOTU_stats_vibrant.tsv` `vOTU_stats_virsorter2.tsv`. They give insight of the taxonomic classification at Family, Subfamily and Genus level. it also includes the checkv quality score, accession number and if the identified virus is a provirus.
 
 The functional annotation can be found in the file `vOTU_AMGs.tsv`. It provides the protein/gene, origin scaffold, ID and the fucntional description.
 

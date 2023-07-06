@@ -4,7 +4,7 @@
 slurm*
 =2
 /benchmarks/*
-/Databases/
+/databases/
 /logs/
 __pycache__/
 config.yaml
@@ -15,3 +15,5 @@ samples.tsv
 ./finished_taxonomy
 ./finished_virus_identification
 ./finished_qc
+.vscode
+working_dir/

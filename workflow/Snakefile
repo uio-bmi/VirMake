@@ -11,7 +11,7 @@ SAMPLE = samples["sample"].values
 ASSEMBLER = config["assembler"]
 
 
-def get_CheckV_threshold(threshold):
+def get_checkv_threshold(threshold):
     """
     Gets the threshold for checkv wuality control.
     """
@@ -67,7 +67,7 @@ rule fastqc_raw:
     """
     input:
         expand(
-            config["Workflow_dirs"]["Samples_dir"] + "{{sample}}_{fractions}.fastq.gz",
+            config["workflow_dirs"]["input_dir"] + "{{sample}}_{fractions}.fastq.gz",
             sample=SAMPLE,
             fractions=end_reads,
         ),
@@ -100,11 +100,11 @@ rule fastp_pe:
     """
     input:
         R1=expand(
-            config["Workflow_dirs"]["Samples_dir"] + "{{sample}}_R1.fastq.gz",
+            config["workflow_dirs"]["input_dir"] + "{{sample}}_R1.fastq.gz",
             sample=SAMPLE,
         ),
         R2=expand(
-            config["Workflow_dirs"]["Samples_dir"] + "{{sample}}_R2.fastq.gz",
+            config["workflow_dirs"]["input_dir"] + "{{sample}}_R2.fastq.gz",
             sample=SAMPLE,
         ),
     output:
@@ -198,7 +198,7 @@ rule metaQUAST:
     """
     params:
         out_dir="results/metaQUAST/",
-        reference_genome=config["Database_dir"]["RefSeq"],
+        reference_genome=config["database_dir"]["RefSeq"],
     input:
         expand("results/metaSpades_assembly/{sample}/contigs.fasta", sample=SAMPLE),
     output:
@@ -225,12 +225,12 @@ rule metaQUAST:
 
 rule virsorter2_pass1:
     """
-    Performes the first pass of viral identification with VirSorter2
+    Performes the first pass of viral identification with virsorter2
     """
     params:
         out_dir="results/virsorter2/",
-        cutoff_length=config["Virsorter2_settings"]["pass1"]["min_lenght"],
-        cutoff_score=config["Virsorter2_settings"]["pass1"]["min_score"],
+        cutoff_length=config["virsorter2_settings"]["pass1"]["min_lenght"],
+        cutoff_score=config["virsorter2_settings"]["pass1"]["min_score"],
     input:
         assembled_contigs=expand(
             "results/metaSpades_assembly/{{sample}}/contigs.fasta", sample=SAMPLE
@@ -274,7 +274,7 @@ rule vibrant_pass1:
         db_dir="$CONDA_PREFIX/share/vibrant-1.2.1/db/databases",
         files_dir="$CONDA_PREFIX/share/vibrant-1.2.1/db/files",
         results="results/vibrant/{sample}/",
-        virome=vibrant_virome(config["Vibrant_settings"]["is_virome"]),
+        virome=vibrant_virome(config["vibrant_settings"]["is_virome"]),
     conda:
         "envs/vibrant.yaml"
     log:
@@ -304,7 +304,7 @@ rule checkv_virsorter2:
     """
     params:
         out_dir="results/checkv/virsorter2/",
-        dir_db=config["Database_dir"]["CheckV"],
+        dir_db=config["database_dir"]["checkv"],
     input:
         expand("results/virsorter2/{{sample}}/final-viral-combined.fa", sample=SAMPLE),
     output:
@@ -337,7 +337,7 @@ rule checkv_vibrant:
     """
     params:
         out_dir="results/checkv/vibrant/",
-        dir_db=config["Database_dir"]["CheckV"],
+        dir_db=config["database_dir"]["checkv"],
     input:
         expand(
             "results/vibrant/{{sample}}/VIBRANT_contigs/VIBRANT_phages_contigs/contigs.phages_combined.fna",
@@ -372,7 +372,7 @@ rule filter_contigs_virsorter2:
     Gathers only relevant sequences with above threshold score
     """
     params:
-        criteria=get_CheckV_threshold(config["CheckV_threshold"]),
+        criteria=get_checkv_threshold(config["checkv_threshold"]),
     input:
         summary=expand(
             "results/checkv/virsorter2/{{sample}}/quality_summary.tsv", sample=SAMPLE
@@ -405,7 +405,7 @@ rule filter_contigs_vibrant:
     Gathers only relevant sequences with above threshold score
     """
     params:
-        criteria=get_CheckV_threshold(config["CheckV_threshold"]),
+        criteria=get_checkv_threshold(config["checkv_threshold"]),
     input:
         summary=expand(
             "results/checkv/vibrant/{{sample}}/quality_summary.tsv", sample=SAMPLE
@@ -435,7 +435,7 @@ rule filter_contigs_vibrant:
 
 rule combine_results_virsorter2:
     """
-    Combine all results from virus identifiaction of all samples with VirSorter2
+    Combine all results from virus identifiaction of all samples with virsorter2
     """
     input:
         expand(
@@ -574,7 +574,7 @@ rule vibrant_pass2:
         db_dir="$CONDA_PREFIX/share/vibrant-1.2.1/db/databases",
         files_dir="$CONDA_PREFIX/share/vibrant-1.2.1/db/files",
         results="results/vibrant/vOTU/",
-        virome=vibrant_virome(config["Vibrant_settings"]["is_virome"]),
+        virome=vibrant_virome(config["vibrant_settings"]["is_virome"]),
     conda:
         "envs/vibrant.yaml"
     log:
@@ -600,12 +600,12 @@ rule vibrant_pass2:
 
 rule virsorter2_pass2:
     """
-    Runs VirSorter2 on the vOTUs
+    Runs virsorter2 on the vOTUs
     """
     params:
         out_dir="results/virsorter2/",
-        cutoff_length=config["Virsorter2_settings"]["pass2"]["min_lenght"],
-        cutoff_score=config["Virsorter2_settings"]["pass2"]["min_score"],
+        cutoff_length=config["virsorter2_settings"]["pass2"]["min_lenght"],
+        cutoff_score=config["virsorter2_settings"]["pass2"]["min_score"],
     input:
         assembled_contigs="results/cdhit/vOTU_derep95_combined.fasta",
     output:
@@ -642,11 +642,11 @@ rule virsorter2_pass2:
 
 rule checkv_vOTU_virsorter2:
     """
-    Runs Quality control on the vOTUs after VirSorter2
+    Runs Quality control on the vOTUs after virsorter2
     """
     params:
         out_dir="results/checkv/vOTU/virsorter2/",
-        dir_db=config["Database_dir"]["CheckV"],
+        dir_db=config["database_dir"]["checkv"],
     input:
         "results/virsorter2/pass2/final-viral-combined.fa",
     output:
@@ -678,7 +678,7 @@ rule checkv_vOTU_vibrant:
     """
     params:
         out_dir="results/checkv/vOTU/vibrant/",
-        dir_db=config["Database_dir"]["CheckV"],
+        dir_db=config["database_dir"]["checkv"],
     input:
         "results/vibrant/vOTU/VIBRANT_vOTU_derep95_combined/VIBRANT_phages_vOTU_derep95_combined/vOTU_derep95_combined.phages_combined.fna",
     output:
@@ -738,11 +738,11 @@ rule read_mapping:
     input:
         "results/mapping/index.done",
         r1=expand(
-            config["Workflow_dirs"]["Samples_dir"] + "{{sample}}_R1.fastq.gz",
+            config["workflow_dirs"]["input_dir"] + "{{sample}}_R1.fastq.gz",
             sample=SAMPLE,
         ),
         r2=expand(
-            config["Workflow_dirs"]["Samples_dir"] + "{{sample}}_R2.fastq.gz",
+            config["workflow_dirs"]["input_dir"] + "{{sample}}_R2.fastq.gz",
             sample=SAMPLE,
         ),
     output:
@@ -893,9 +893,9 @@ rule inphared_setup:
     Adds relevant entires from INPHARED into setup files before VCONTACT2
     """
     params:
-        inphared_g2g=config["Database_dir"]["Inphared"]
+        inphared_g2g=config["database_dir"]["INPHARED"]
         + "/1Dec2022_vConTACT2_gene_to_genome.csv",
-        inphared_proteins=config["Database_dir"]["Inphared"]
+        inphared_proteins=config["database_dir"]["INPHARED"]
         + "/1Dec2022_vConTACT2_proteins.faa",
         simplify_faa="workflow/scripts/simplify_faa-ffn_derep.py",
     input:
@@ -971,7 +971,7 @@ rule dramv_annotate:
     output:
         results="results/DRAMv/annotations.tsv",
     params:
-        dram_config=config["Database_dir"]["DRAM"] + "/DRAM.config",
+        dram_config=config["database_dir"]["DRAM"] + "/DRAM.config",
         output_dir="results/DRAMv",
     conda:
         "envs/DRAMv.yaml"
@@ -1036,7 +1036,7 @@ rule graphanalyzer:
     input:
         cluster="results/vcontact2/c1.ntw",
         csv="results/vcontact2/genome_by_genome_overview.csv",
-        meta=config["Database_dir"]["Inphared"] + "/1Dec2022_data_excluding_refseq.tsv",
+        meta=config["database_dir"]["INPHARED"] + "/1Dec2022_data_excluding_refseq.tsv",
     output:
         "results/graphanalyzer/csv_edit_vOTU_results.xlsx",
     conda:
